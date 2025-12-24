@@ -1,0 +1,14 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: shoppy-globe-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - shoppy-globe-data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+
+volumes:
+  shoppy-globe-data:

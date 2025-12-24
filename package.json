@@ -1,0 +1,14 @@
+{
+  "name": "shoppy-globe-backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "db:start": "docker compose up --detach",
+    "db:stop": "docker compose stop"
+  },
+  "type": "module",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
