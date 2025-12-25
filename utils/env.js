@@ -1,3 +1,6 @@
+// load .env file (requires Node v20+)
+process.loadEnvFile();
+
 export function getEnvVar(name) {
   const value = process.env[name];
 

@@ -17,10 +17,8 @@ import {
   validateRegisterBody,
   validateUpdateCartBody,
 } from "./middlewares/validation.js";
+import { authenticateUser } from "./middlewares/auth.js";
 import { getEnvVar } from "./utils/env.js";
-
-// load .env file
-process.loadEnvFile();
 
 // connect to database
 const DB_URL = getEnvVar("DB_URL");
@@ -49,6 +47,7 @@ app.get("/products", handleProducts);
 app.get("/products/:id", handleProductsByID);
 
 // cart routes
+app.use(authenticateUser);
 app.post("/cart", validateAddToCartBody, handleAddToCart);
 app.put("/cart/:id", validateUpdateCartBody, handleUpdateCartItem);
 app.delete("/cart/:id", handleRemoveFromCart);

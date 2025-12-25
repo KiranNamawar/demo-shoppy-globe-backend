@@ -15,7 +15,6 @@ function validateBody(schema) {
       schema.parse(req.body);
       next();
     } catch (error) {
-      console.log(error.issues);
       res.status(400).json({
         error: "Validation failed",
         details: error.issues.map((e) => e.message),
@@ -27,7 +26,7 @@ function validateBody(schema) {
 const registerSchema = z.object({
   firstName: z.string({ error: "First name is required" }),
   lastName: z.string({ error: "Last name is required" }),
-  email: z.email({ error: "Invalid Email Format" }),
+  email: z.email({ error: "Invalid Email" }),
   password: z
     .string({ error: "Password is required" })
     .min(8, { error: "Password must be at least 8 characters long" }),
