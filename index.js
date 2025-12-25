@@ -11,6 +11,12 @@ import {
   handleProducts,
   handleProductsByID,
 } from "./controllers/productsController.js";
+import {
+  validateAddToCartBody,
+  validateLoginBody,
+  validateRegisterBody,
+  validateUpdateCartBody,
+} from "./middlewares/validation.js";
 import { getEnvVar } from "./utils/env.js";
 
 // load .env file
@@ -35,23 +41,17 @@ app.get("/", (_, res) => {
 });
 
 // auth routes
-app.post("/register", handleRegister);
-app.post("/login", handleLogin);
+app.post("/register", validateRegisterBody, handleRegister);
+app.post("/login", validateLoginBody, handleLogin);
 
 // products routes
 app.get("/products", handleProducts);
 app.get("/products/:id", handleProductsByID);
 
 // cart routes
-app.post("/cart", handleAddToCart);
-app.put("/cart/:id", handleUpdateCartItem);
+app.post("/cart", validateAddToCartBody, handleAddToCart);
+app.put("/cart/:id", validateUpdateCartBody, handleUpdateCartItem);
 app.delete("/cart/:id", handleRemoveFromCart);
-
-// Global error handler
-app.use((error, _, res) => {
-  console.error("Server error:", error);
-  res.status(500).json({ error: "Interal Server Error" });
-});
 
 // start server on port 3000
 app.listen(3000, () => {
