@@ -39,14 +39,18 @@ const loginSchema = z.object({
 
 const addToCartSchema = z.object({
   productId: z.string({ error: "productId is required" }),
-  quantity: z
-    .int({ error: "quantity is required" })
+  quantity: z.coerce
+    .number({ error: "quantity is required" })
+    .int()
+    .positive()
     .min(1, { error: "quantity must be at least 1" }),
 });
 
 const updateCartSchema = z.object({
-  quantity: z
-    .int({ error: "quantity is required" })
+  quantity: z.coerce
+    .number({ error: "quantity is required" })
+    .int()
+    .positive()
     .min(1, { error: "quantity must be at least 1" }),
 });
 

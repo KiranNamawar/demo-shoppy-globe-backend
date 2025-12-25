@@ -5,13 +5,15 @@ import User from "../models/user.js";
 export async function handleRegister(req, res) {
   const { firstName, lastName, email, password } = req.body;
   try {
-    const existingUser = await User.findOne({ email }).exec();
+    // check if user already exists
+    const existingUser = await User.findOne({ email }).lean();
     if (existingUser) {
       return res.status(403).json({
         error: "Account already exists. Try login.",
       });
     }
 
+    // create new user with hased password
     const hashedPassword = await hashPassword(password);
     const newUser = await User.create({
       firstName,
@@ -20,24 +22,31 @@ export async function handleRegister(req, res) {
       password: hashedPassword,
     });
 
-    res.send(newUser._id);
+    res.send({
+      message: "User Created",
+      userId: newUser._id,
+      email: newUser.email,
+    });
   } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
+    next(err);
   }
 }
 
 export async function handleLogin(req, res) {
   const { email, password } = req.body;
   try {
-    const existingUser = await User.findOne({ email }).exec();
+    // check if user doesn't exists
+    const existingUser = await User.findOne({ email });
     if (!existingUser) {
       return res.status(403).json({
         error: "Invalid Credentials",
       });
     }
+
+    // compare password with password hash from db
     const isPasswordValid = await comparePassword(
       password,
-      existingUser.password,
+      existingUser.password
     );
     if (!isPasswordValid) {
       return res.status(403).json({
@@ -45,13 +54,21 @@ export async function handleLogin(req, res) {
       });
     }
 
+    // create jwt with user data
     const token = generateToken({
       id: existingUser._id,
       email: existingUser.email,
     });
 
-    res.send(token);
+    // update last login
+    existingUser.lastLogin = Date.now();
+    await existingUser.save();
+
+    res.send({
+      message: "User Logged In",
+      accessToken: token,
+    });
   } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
+    next(err);
   }
 }
